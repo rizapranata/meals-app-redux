@@ -1,26 +1,32 @@
-import { useContext, useLayoutEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { useContext, useLayoutEffect } from "react";
+import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 
-import IconButton from '../components/IconButton';
-import List from '../components/MealDetail/List';
-import Subtitle from '../components/MealDetail/Subtitle';
-import MealDetails from '../components/MealDetails';
-import { MEALS } from '../data/dummy-data';
-import { FavoritesContext } from '../store/context/favorites-context';
+import IconButton from "../components/IconButton";
+import List from "../components/MealDetail/List";
+import Subtitle from "../components/MealDetail/Subtitle";
+import MealDetails from "../components/MealDetails";
+import { MEALS } from "../data/dummy-data";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../store/redux/favorites";
+// import { FavoritesContext } from '../store/context/favorites-context';
 
 function MealDetailScreen({ route, navigation }) {
-  const favoriteMealsCtx = useContext(FavoritesContext);
+  // const favoriteMealsCtx = useContext(FavoritesContext);
+  const favoriteMealsIds = useSelector((state) => state.favoriteMeals.ids);
+  const dispatch = useDispatch();
 
   const mealId = route.params.mealId;
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
 
-  const mealIsFavorite = favoriteMealsCtx.ids.includes(mealId);
+  const mealIsFavorite = favoriteMealsIds.includes(mealId);
 
   function changeFavoriteStatusHandler() {
     if (mealIsFavorite) {
-      favoriteMealsCtx.removeFavorite(mealId);
-    }else{
-      favoriteMealsCtx.addFavorite(mealId);
+      // favoriteMealsCtx.removeFavorite(mealId);
+      dispatch(removeFavorite({ id: mealId }));
+    } else {
+      // favoriteMealsCtx.addFavorite(mealId);
+      dispatch(addFavorite({ id: mealId }));
     }
   }
 
@@ -67,23 +73,23 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 350,
   },
   title: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 24,
     margin: 8,
-    textAlign: 'center',
-    color: 'white',
+    textAlign: "center",
+    color: "white",
   },
   detailText: {
-    color: 'white',
+    color: "white",
   },
   listOuterContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   listContainer: {
-    width: '80%',
+    width: "80%",
   },
 });

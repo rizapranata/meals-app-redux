@@ -3,10 +3,13 @@ import { StyleSheet, Text, View } from "react-native";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import Button from "../components/UI/Button";
+import { useDispatch } from "react-redux";
+import { addExpense, removeExpense } from "../store/redux/expenses";
 
 function ManageExpense({ route, navigation }) {
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -15,14 +18,28 @@ function ManageExpense({ route, navigation }) {
   }, [navigation, isEditing]);
 
   function deleteExpenseHandler() {
+    dispatch(removeExpense({ id: editedExpenseId }));
     navigation.goBack();
   }
 
   function cancelHandler() {
     navigation.goBack();
   }
-  
+
   function confirmHandler() {
+    if (isEditing) {
+      console.log("this edit handeler");
+    } else {
+      dispatch(
+        addExpense({
+          data: {
+            description: "New expense",
+            amount: 1000,
+            date: new Date("2023-12-13"),
+          },
+        })
+      );
+    }
     navigation.goBack();
   }
 

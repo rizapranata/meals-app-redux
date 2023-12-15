@@ -35,31 +35,7 @@ const DUMMY_EXPENSES = [
     id: "e6",
     description: "A pair of shoes",
     amount: 57000,
-    date: new Date("2023-12-9"),
-  },
-  {
-    id: "e7",
-    description: "A tshirt",
-    amount: 27000,
-    date: new Date("2023-11-17"),
-  },
-  {
-    id: "e8",
-    description: "A Book",
-    amount: 45000,
-    date: new Date("2023-12-7"),
-  },
-  {
-    id: "e9",
-    description: "Another book",
-    amount: 45000,
-    date: new Date("2023-11-20"),
-  },
-  {
-    id: "e10",
-    description: "Class Udemy",
-    amount: 99000,
-    date: new Date("2023-12-10"),
+    date: new Date("2023-12-09"),
   },
 ];
 
@@ -70,9 +46,18 @@ const expensesSlice = createSlice({
   },
   reducers: {
     addExpense: (state, action) => {
-      console.log("add data:", action.payload.data);
-      const id = new Date();
-      state.expensesData.push({ ...action.payload.data, id: id });
+      const id = Math.floor(Math.random() * 100).toString();
+      state.expensesData.push({...action.payload.data, id: id});
+    },
+
+    updateExpense: (state, action) => {
+      const id = action.payload.id;
+      const updatableExpenseIndex = state.expensesData.findIndex(
+        (item) => item.id === id
+      );
+      const updatableExpense = state.expensesData[updatableExpenseIndex];
+      const updatedItem = { ...updatableExpense, ...action.payload.data };
+      state.expensesData[updatableExpenseIndex] = updatedItem
     },
 
     removeExpense: (state, action) => {
@@ -84,6 +69,7 @@ const expensesSlice = createSlice({
   },
 });
 
-export const { addExpense, removeExpense } = expensesSlice.actions;
+export const { addExpense, removeExpense, updateExpense } =
+  expensesSlice.actions;
 
 export default expensesSlice.reducer;

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import Button from "../components/UI/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addExpense,
   removeExpense,
@@ -16,7 +16,8 @@ function ManageExpense({ route, navigation }) {
   const isEditing = !!editedExpenseId;
   const dispatch = useDispatch();
 
-  console.log("item id:", editedExpenseId);
+  const expensesList = useSelector((state) => state.expenses.expensesData);
+  const selectedExpense = expensesList.find((expense) => expense.id === editedExpenseId);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -48,6 +49,7 @@ function ManageExpense({ route, navigation }) {
         submitButtonLabel={isEditing ? "Update" : "Add"}
         onSubmit={confirmHandler}
         onCancel={cancelHandler}
+        defaultValues={selectedExpense}
       />
       {isEditing && (
         <View style={styles.deleteContainer}>

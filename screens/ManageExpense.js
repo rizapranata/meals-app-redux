@@ -6,6 +6,7 @@ import Button from "../components/UI/Button";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addExpense,
+  addExpenseAsync,
   removeExpense,
   updateExpense,
 } from "../store/redux/expenses";
@@ -39,6 +40,7 @@ function ManageExpense({ route, navigation }) {
       dispatch(updateExpense({ id: editedExpenseId, data: expenseData }));
     } else {
       dispatch(addExpense({ data: expenseData }));
+      dispatch(addExpenseAsync(expenseData));
     }
     navigation.goBack();
   }

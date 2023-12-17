@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const DUMMY_EXPENSES = [
   {
@@ -39,10 +40,38 @@ const DUMMY_EXPENSES = [
   },
 ];
 
+const BASE_URL =
+  "https://expense-app-36c12-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+export const fetchExpensesAsync = createAsyncThunk("expenses/get", async () => {
+  const response = await axios.get(BASE_URL + "/expenses.json");
+  const result = [];
+
+  for(const key in response.data){
+    const expenseObj = {
+      id: key,
+      amount: response.data[key].amount,
+      date: new Date(response.data[key].date),
+      description: response.data[key].description
+    }
+    result.push(expenseObj)
+  }
+  return result;
+});
+
+export const addExpenseAsync = createAsyncThunk(
+  "expenses/post",
+  async (payload) => {
+    const response = await axios.post(BASE_URL + "/expenses.json", payload);
+    return response.data;
+  }
+);
+
 const expensesSlice = createSlice({
   name: "expenses",
   initialState: {
-    expensesData: DUMMY_EXPENSES,
+    expensesData: [],
+    status: "idle",
   },
   reducers: {
     addExpense: (state, action) => {
@@ -67,6 +96,19 @@ const expensesSlice = createSlice({
 
       state.expensesData.splice(ableDeleteExpense, 1);
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchExpensesAsync.pending, (state, action) => {
+        state.status = "loading...";
+      })
+      .addCase(fetchExpensesAsync.fulfilled, (state, action) => {
+        state.expensesData = action.payload;
+        state.status = "idle";
+      })
+      .addCase(fetchExpensesAsync.rejected, (state, action) => {
+        state.status = "error";
+      });
   },
 });
 

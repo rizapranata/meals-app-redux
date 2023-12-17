@@ -5,6 +5,6 @@ import expensesReducer from "./expenses";
 export const store = configureStore({
   reducer: {
     favoriteMeals: favoritesReducer,
-    expenses: expensesReducer
+    expenses: expensesReducer,
   },
 });
